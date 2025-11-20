@@ -31,7 +31,7 @@ Window &Window::operator=(Window &&other) noexcept {
 
 void Window::make_context_current() { glfwMakeContextCurrent(window_); }
 
-bool Window::should_close() const { return glfwWindowShouldClose(window_); }
+bool Window::should_close() const { return glfwWindowShouldClose(window_) == GLFW_TRUE; }
 
 void Window::set_should_close(bool value) { glfwSetWindowShouldClose(window_, value ? GLFW_TRUE : GLFW_FALSE); }
 
