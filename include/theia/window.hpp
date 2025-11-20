@@ -56,7 +56,7 @@ public:
     WindowBuilder &transparent_framebuffer(bool transparent);
     WindowBuilder &focus_on_show(bool focus_on_show);
     WindowBuilder &scale_to_monitor(bool scale_to_monitor);
-    WindowBuilder &mouse_passthrough(bool passthrough); // GLFW 3.4+
+    WindowBuilder &mouse_passthrough(bool passthrough);
 
     // Framebuffer related hints
     WindowBuilder &red_bits(int bits);
@@ -99,8 +99,6 @@ private:
     GLFWwindow *share_ = nullptr;
 
     std::unordered_map<int, int> hints_;
-
-    WindowBuilder &set_hint_(int hint, int value);
 };
 
 } // namespace theia

@@ -18,6 +18,7 @@ target_sources(theia
         # for f in sorted(sources):
         #     cog.outl(f'"{f.replace(os.sep, "/")}"')
         # ]]]
+        "src/theia/glfw_raii.cpp"
         "src/theia/logger.cpp"
         "src/theia/theia.cpp"
         "src/theia/window.cpp"
@@ -35,6 +36,7 @@ target_sources(theia
         # for f in sorted(headers):
         #     cog.outl(f'"{f.replace(os.sep, "/")}"')
         # ]]]
+        "include/theia/glfw_raii.hpp"
         "include/theia/logger.hpp"
         "include/theia/theia.hpp"
         "include/theia/window.hpp"
@@ -74,7 +76,6 @@ FetchContent_Declare(
         SOURCE_SUBDIR cmake
 )
 FetchContent_MakeAvailable(glad)
-
 glad_add_library(glad_gl_core_46 REPRODUCIBLE API gl:core=4.6)
 
 target_link_libraries(theia PUBLIC

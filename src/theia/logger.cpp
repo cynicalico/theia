@@ -4,17 +4,22 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace theia {
-std::shared_ptr<spdlog::logger> Logger::s_logger;
+std::shared_ptr<spdlog::logger> Logger::s_logger{nullptr};
 
-void Logger::init() {
+std::shared_ptr<spdlog::logger> &Logger::instance() {
+    if (!s_logger) {
+        init_();
+    }
+    return s_logger;
+}
+
+std::vector<spdlog::sink_ptr> &Logger::sinks() { return s_logger->sinks(); }
+
+void Logger::init_() {
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("theia.log", true);
 
     s_logger = std::make_shared<spdlog::logger>("theia", spdlog::sinks_init_list{console_sink, file_sink});
     s_logger->set_level(spdlog::level::trace);
 }
-
-std::shared_ptr<spdlog::logger> &Logger::get_logger() { return s_logger; }
-
-std::vector<spdlog::sink_ptr> &Logger::get_sinks() { return s_logger->sinks(); }
 } // namespace theia
