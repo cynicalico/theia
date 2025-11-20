@@ -1,7 +1,7 @@
 #pragma once
 
-#include "glm/vec2.hpp"
-#include "glm/vec4.hpp"
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 
 #include <filesystem>
 #include <memory>
@@ -10,6 +10,7 @@
 
 struct GLFWwindow;
 struct GLFWmonitor;
+struct GLFWvidmode;
 
 namespace theia {
 class Window {
@@ -71,7 +72,6 @@ public:
     [[nodiscard]] bool transparent_framebuffer() const;
     [[nodiscard]] bool focused_on_show() const;
     [[nodiscard]] bool mouse_passthrough() const;
-
     void focus();
     void request_focus();
     void iconify();
@@ -85,9 +85,10 @@ public:
     void set_focus_on_show(bool focus_on_show);
     void set_mouse_passthrough(bool enabled);
 
-    [[nodiscard]] GLFWwindow *get_native_window() const;
     [[nodiscard]] void *user_pointer() const;
-    void set_user_pointer(void *pointer);
+    void set_user_pointer(void *ptr);
+
+    [[nodiscard]] GLFWwindow *handle() const;
 
 private:
     GLFWwindow *window_ = nullptr;
@@ -98,13 +99,13 @@ public:
     WindowBuilder();
 
     // Basic properties
-    WindowBuilder &size(int width, int height);
+    WindowBuilder &size(glm::ivec2 size);
     WindowBuilder &title(std::string title);
     WindowBuilder &monitor(GLFWmonitor *monitor);
     WindowBuilder &share(GLFWwindow *share);
 
     // Window related hints
-    WindowBuilder &position(int x, int y);
+    WindowBuilder &position(glm::ivec2 position);
     WindowBuilder &resizable(bool resizable);
     WindowBuilder &visible(bool visible);
     WindowBuilder &decorated(bool decorated);
@@ -137,6 +138,7 @@ public:
 
     // Monitor related hints
     WindowBuilder &refresh_rate(int refresh_rate);
+    WindowBuilder &match_vidmode(const GLFWvidmode *vidmode);
 
     // Context related hints
     WindowBuilder &client_api(int api);

@@ -96,8 +96,7 @@ static void read_image(std::vector<std::vector<std::byte>> &image_data,
                        std::vector<GLFWimage> &images,
                        const std::filesystem::path &path) {
     auto [bytes, w, h] = theia::read_image_bytes(path);
-    if (bytes.empty())
-        return;
+    if (bytes.empty()) return;
     image_data.push_back(std::move(bytes));
     images.push_back(GLFWimage{w, h, reinterpret_cast<unsigned char *>(image_data.back().data())});
 }
@@ -116,8 +115,7 @@ void theia::Window::set_icon(const std::filesystem::path &path) {
         read_image(image_data, images, path);
     }
 
-    if (!images.empty())
-        glfwSetWindowIcon(window_, images.size(), images.data());
+    if (!images.empty()) glfwSetWindowIcon(window_, images.size(), images.data());
 }
 
 GLFWmonitor *theia::Window::monitor() const { return glfwGetWindowMonitor(window_); }
@@ -200,17 +198,17 @@ void theia::Window::set_mouse_passthrough(bool enabled) {
     glfwSetWindowAttrib(window_, GLFW_MOUSE_PASSTHROUGH, enabled ? GLFW_TRUE : GLFW_FALSE);
 }
 
-GLFWwindow *theia::Window::get_native_window() const { return window_; }
-
 void *theia::Window::user_pointer() const { return glfwGetWindowUserPointer(window_); }
 
-void theia::Window::set_user_pointer(void *pointer) { glfwSetWindowUserPointer(window_, pointer); }
+void theia::Window::set_user_pointer(void *ptr) { glfwSetWindowUserPointer(window_, ptr); }
+
+GLFWwindow *theia::Window::handle() const { return window_; }
 
 theia::WindowBuilder::WindowBuilder() = default;
 
-theia::WindowBuilder &theia::WindowBuilder::size(int width, int height) {
-    width_ = width;
-    height_ = height;
+theia::WindowBuilder &theia::WindowBuilder::size(glm::ivec2 size) {
+    width_ = size.x;
+    height_ = size.y;
     return *this;
 }
 
@@ -229,9 +227,9 @@ theia::WindowBuilder &theia::WindowBuilder::share(GLFWwindow *share) {
     return *this;
 }
 
-theia::WindowBuilder &theia::WindowBuilder::position(int x, int y) {
-    hints_[GLFW_POSITION_X] = x;
-    hints_[GLFW_POSITION_Y] = y;
+theia::WindowBuilder &theia::WindowBuilder::position(glm::ivec2 position) {
+    hints_[GLFW_POSITION_X] = position.x;
+    hints_[GLFW_POSITION_Y] = position.y;
     return *this;
 }
 
@@ -375,6 +373,15 @@ theia::WindowBuilder &theia::WindowBuilder::refresh_rate(int refresh_rate) {
     return *this;
 }
 
+theia::WindowBuilder &theia::WindowBuilder::match_vidmode(const GLFWvidmode *vidmode) {
+    red_bits(vidmode->redBits);
+    green_bits(vidmode->greenBits);
+    blue_bits(vidmode->blueBits);
+    refresh_rate(vidmode->refreshRate);
+    size({vidmode->width, vidmode->height});
+    return *this;
+}
+
 theia::WindowBuilder &theia::WindowBuilder::client_api(int api) {
     hints_[GLFW_CLIENT_API] = api;
     return *this;
@@ -433,5 +440,5 @@ std::unique_ptr<theia::Window> theia::WindowBuilder::build() const {
         throw std::runtime_error("Failed to create GLFW window");
     }
 
-    return std::make_unique<theia::Window>(window);
+    return std::make_unique<Window>(window);
 }

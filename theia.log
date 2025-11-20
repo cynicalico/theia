@@ -1,2 +1,2 @@
-[2025-11-20 12:22:52.102] [theia] [info] [glfw_raii.cpp:14] GLFW v3.5.0 Win32 WGL Null EGL OSMesa VisualC
-[2025-11-20 12:22:52.476] [theia] [info] [indev.cpp:27] OpenGL Version: 4.6.0 NVIDIA 576.83
+[2025-11-20 14:26:10.048] [theia] [info] [glfw_raii.cpp:15] GLFW v3.5.0 Win32 WGL Null EGL OSMesa VisualC
+[2025-11-20 14:26:10.550] [theia] [info] [indev.cpp:23] OpenGL Version: 4.6.0 NVIDIA 576.83

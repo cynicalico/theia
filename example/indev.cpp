@@ -1,22 +1,18 @@
 #include "theia/theia.hpp"
 
-#include <glad/gl.h>
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-
 int main(int, char *[]) {
     const auto glfw = theia::GlfwContext();
 
+    const auto monitors = theia::get_monitors();
     const auto window = theia::WindowBuilder()
                             .context_version(4, 6)
                             .opengl_profile(GLFW_OPENGL_CORE_PROFILE)
-                            .visible(false)
                             .title("Indev")
+                            // .monitor(monitors[1].handle())
+                            .match_vidmode(monitors[0].vidmode())
+                            .position(monitors[0].position())
+                            .decorated(false)
                             .build();
-
-    const auto monitor = glfwGetPrimaryMonitor();
-    const auto vidmode = glfwGetVideoMode(monitor);
-    window->set_position({vidmode->width / 2 - window->w() / 2, vidmode->height / 2 - window->h() / 2});
 
     window->set_icon("assets/gem_16x16.png");
 
@@ -26,7 +22,6 @@ int main(int, char *[]) {
     }
     THEIA_LOG_INFO("OpenGL Version: {}", reinterpret_cast<const char *>(glGetString(GL_VERSION)));
 
-    window->set_visible(true);
     while (!window->should_close()) {
         glfwPollEvents();
 
