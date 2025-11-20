@@ -1,10 +1,12 @@
 #pragma once
 
+#include "glm/vec2.hpp"
+#include "glm/vec4.hpp"
+
 #include <memory>
 #include <string>
 #include <unordered_map>
 
-// Forward declarations
 struct GLFWwindow;
 struct GLFWmonitor;
 
@@ -28,7 +30,64 @@ public:
 
     void swap_buffers();
 
+    [[nodiscard]] glm::ivec2 size() const;
+    void set_size(glm::ivec2 size);
+    [[nodiscard]] int w() const;
+    [[nodiscard]] int h() const;
+    [[nodiscard]] glm::ivec4 frame_size() const;
+
+    [[nodiscard]] glm::ivec2 framebuffer_size() const;
+
+    [[nodiscard]] glm::vec2 content_scale() const;
+
+    void set_size_limits(glm::ivec2 min_limits, glm::ivec2 max_limits);
+    void set_aspect_ratio(int numer, int denom);
+
+    [[nodiscard]] glm::ivec2 position() const;
+    void set_position(glm::ivec2 pos);
+    [[nodiscard]] int x() const;
+    [[nodiscard]] int y() const;
+
+    [[nodiscard]] const char *title() const;
+    void set_title(const std::string &title);
+
+    // void set_icon(const std::filesystem::path &path);
+
+    [[nodiscard]] GLFWmonitor *monitor() const;
+    void set_monitor(GLFWmonitor *monitor, int x_pos, int y_pos, int width, int height, int refresh_rate);
+
+    [[nodiscard]] float opacity() const;
+    void set_opacity(float opacity);
+
+    [[nodiscard]] bool focused() const;
+    [[nodiscard]] bool iconified() const;
+    [[nodiscard]] bool maximized() const;
+    [[nodiscard]] bool hovered() const;
+    [[nodiscard]] bool visible() const;
+    [[nodiscard]] bool resizable() const;
+    [[nodiscard]] bool decorated() const;
+    [[nodiscard]] bool auto_iconify() const;
+    [[nodiscard]] bool floating() const;
+    [[nodiscard]] bool transparent_framebuffer() const;
+    [[nodiscard]] bool focused_on_show() const;
+    [[nodiscard]] bool mouse_passthrough() const;
+
+    void focus();
+    void request_focus();
+    void iconify();
+    void maximize();
+    void restore();
+    void set_visible(bool visible);
+    void set_resizable(bool resizable);
+    void set_decorated(bool decorated);
+    void set_auto_iconify(bool auto_iconify);
+    void set_floating(bool floating);
+    void set_focus_on_show(bool focus_on_show);
+    void set_mouse_passthrough(bool enabled);
+
     [[nodiscard]] GLFWwindow *get_native_window() const;
+    [[nodiscard]] void *user_pointer() const;
+    void set_user_pointer(void *pointer);
 
 private:
     GLFWwindow *window_ = nullptr;
@@ -45,6 +104,7 @@ public:
     WindowBuilder &share(GLFWwindow *share);
 
     // Window related hints
+    WindowBuilder &position(int x, int y);
     WindowBuilder &resizable(bool resizable);
     WindowBuilder &visible(bool visible);
     WindowBuilder &decorated(bool decorated);
