@@ -19,6 +19,7 @@ target_sources(theia
         #     cog.outl(f'"{f.replace(os.sep, "/")}"')
         # ]]]
         "src/theia/glfw_raii.cpp"
+        "src/theia/io.cpp"
         "src/theia/logger.cpp"
         "src/theia/theia.cpp"
         "src/theia/window.cpp"
@@ -37,9 +38,25 @@ target_sources(theia
         #     cog.outl(f'"{f.replace(os.sep, "/")}"')
         # ]]]
         "include/theia/glfw_raii.hpp"
+        "include/theia/io.hpp"
         "include/theia/logger.hpp"
         "include/theia/theia.hpp"
         "include/theia/window.hpp"
+        # [[[end]]]
+
+        PUBLIC
+        FILE_SET HEADERS
+        BASE_DIRS thirdparty/stb
+        FILES
+        # [[[cog
+        # import glob
+        # import os
+        #
+        # headers = glob.glob("thirdparty/stb/**/*.h", recursive=True)
+        # for f in sorted(headers):
+        #     cog.outl(f'"{f.replace(os.sep, "/")}"')
+        # ]]]
+        "thirdparty/stb/stb_image.h"
         # [[[end]]]
 )
 

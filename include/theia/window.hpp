@@ -3,6 +3,7 @@
 #include "glm/vec2.hpp"
 #include "glm/vec4.hpp"
 
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -11,7 +12,6 @@ struct GLFWwindow;
 struct GLFWmonitor;
 
 namespace theia {
-
 class Window {
 public:
     explicit Window(GLFWwindow *window);
@@ -51,7 +51,7 @@ public:
     [[nodiscard]] const char *title() const;
     void set_title(const std::string &title);
 
-    // void set_icon(const std::filesystem::path &path);
+    void set_icon(const std::filesystem::path &path);
 
     [[nodiscard]] GLFWmonitor *monitor() const;
     void set_monitor(GLFWmonitor *monitor, int x_pos, int y_pos, int width, int height, int refresh_rate);
@@ -160,5 +160,4 @@ private:
 
     std::unordered_map<int, int> hints_;
 };
-
 } // namespace theia

@@ -1,6 +1,9 @@
 #include "theia/window.hpp"
 
 #define GLFW_INCLUDE_NONE
+#include "stb_image.h"
+#include "theia/io.hpp"
+
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 
@@ -88,6 +91,34 @@ int theia::Window::y() const { return position().y; }
 const char *theia::Window::title() const { return glfwGetWindowTitle(window_); }
 
 void theia::Window::set_title(const std::string &title) { glfwSetWindowTitle(window_, title.c_str()); }
+
+static void read_image(std::vector<std::vector<std::byte>> &image_data,
+                       std::vector<GLFWimage> &images,
+                       const std::filesystem::path &path) {
+    auto [bytes, w, h] = theia::read_image_bytes(path);
+    if (bytes.empty())
+        return;
+    image_data.push_back(std::move(bytes));
+    images.push_back(GLFWimage{w, h, reinterpret_cast<unsigned char *>(image_data.back().data())});
+}
+
+void theia::Window::set_icon(const std::filesystem::path &path) {
+    std::vector<std::vector<std::byte>> image_data{};
+    std::vector<GLFWimage> images{};
+
+    if (std::filesystem::is_directory(path)) {
+        for (const auto &entry : std::filesystem::directory_iterator(path)) {
+            if (entry.is_regular_file()) {
+                read_image(image_data, images, entry.path());
+            }
+        }
+    } else {
+        read_image(image_data, images, path);
+    }
+
+    if (!images.empty())
+        glfwSetWindowIcon(window_, images.size(), images.data());
+}
 
 GLFWmonitor *theia::Window::monitor() const { return glfwGetWindowMonitor(window_); }
 
