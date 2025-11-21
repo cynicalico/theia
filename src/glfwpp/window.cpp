@@ -1,4 +1,5 @@
 #include "glfwpp/window.hpp"
+#include "glfwpp/input.hpp"
 #include "theia/io.hpp"
 
 #define GLFW_INCLUDE_NONE
@@ -9,6 +10,7 @@
 glfwpp::Window::Window(GLFWwindow *window)
     : handle_(window) {
     set_user_pointer(this);
+    set_input_callbacks(handle_);
 }
 
 glfwpp::Window::~Window() {
@@ -21,6 +23,7 @@ glfwpp::Window::Window(Window &&other) noexcept
     : handle_(other.handle_) {
     other.handle_ = nullptr;
     set_user_pointer(this);
+    set_input_callbacks(handle_);
 }
 
 glfwpp::Window &glfwpp::Window::operator=(Window &&other) noexcept {
@@ -31,6 +34,7 @@ glfwpp::Window &glfwpp::Window::operator=(Window &&other) noexcept {
         handle_ = other.handle_;
         other.handle_ = nullptr;
         set_user_pointer(this);
+        set_input_callbacks(handle_);
     }
     return *this;
 }
