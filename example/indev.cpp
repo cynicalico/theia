@@ -3,17 +3,14 @@
 int main(int, char *[]) {
     const auto glfw = theia::GlfwContext();
 
-    const auto monitors = theia::get_monitors();
+    const auto monitor = theia::get_primary_monitor();
     const auto window = theia::WindowBuilder()
                             .context_version(4, 6)
                             .opengl_profile(GLFW_OPENGL_CORE_PROFILE)
                             .title("Indev")
-                            // .monitor(monitors[1].handle())
-                            .match_vidmode(monitors[0].vidmode())
-                            .position(monitors[0].position())
-                            .decorated(false)
+                            .monitor(monitor->handle())
+                            .match_vidmode(monitor->vidmode())
                             .build();
-
     window->set_icon("assets/gem_16x16.png");
 
     window->make_context_current();
@@ -21,6 +18,12 @@ int main(int, char *[]) {
         throw std::runtime_error("Failed to initialize Glad");
     }
     THEIA_LOG_INFO("OpenGL Version: {}", reinterpret_cast<const char *>(glGetString(GL_VERSION)));
+
+    glfwSetKeyCallback(window->handle(), [](GLFWwindow *window, int key, int, int action, int) {
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+            static_cast<theia::Window *>(glfwGetWindowUserPointer(window))->set_should_close(true);
+        }
+    });
 
     while (!window->should_close()) {
         glfwPollEvents();

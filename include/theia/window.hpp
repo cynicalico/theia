@@ -91,7 +91,7 @@ public:
     [[nodiscard]] GLFWwindow *handle() const;
 
 private:
-    GLFWwindow *window_ = nullptr;
+    GLFWwindow *handle_ = nullptr;
 };
 
 class WindowBuilder {
