@@ -43,6 +43,7 @@ target_sources(theia
         "include/glfwpp/glfwpp.hpp"
         "include/glfwpp/monitor.hpp"
         "include/glfwpp/window.hpp"
+        "include/theia/hermes.hpp"
         "include/theia/io.hpp"
         "include/theia/logger.hpp"
         "include/theia/theia.hpp"
