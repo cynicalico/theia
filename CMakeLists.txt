@@ -20,6 +20,7 @@ target_sources(theia
         # ]]]
         "src/glfwpp/context.cpp"
         "src/glfwpp/glfwpp.cpp"
+        "src/glfwpp/input.cpp"
         "src/glfwpp/monitor.cpp"
         "src/glfwpp/window.cpp"
         "src/theia/io.cpp"
@@ -41,6 +42,7 @@ target_sources(theia
         # ]]]
         "include/glfwpp/context.hpp"
         "include/glfwpp/glfwpp.hpp"
+        "include/glfwpp/input.hpp"
         "include/glfwpp/monitor.hpp"
         "include/glfwpp/window.hpp"
         "include/theia/hermes.hpp"

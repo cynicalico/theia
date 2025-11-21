@@ -1,5 +1,6 @@
 #pragma once
 
+#include "theia/hermes.hpp"
 #include "theia/io.hpp"
 #include "theia/logger.hpp"
 

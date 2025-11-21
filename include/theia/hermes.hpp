@@ -28,12 +28,14 @@ namespace theia {
 template <typename T>
 concept HashHermesId = std::same_as<decltype(T::HERMES_ID), const std::uint32_t>;
 
-class Messenger {
+class Hermes {
     using Payload = std::span<const std::byte>;
     using Receiver = std::function<void(Payload)>;
 
 public:
     using ID = std::size_t;
+
+    static Hermes &instance();
 
     ID get_id();
     void release_id(ID id);
@@ -70,7 +72,12 @@ private:
 };
 } // namespace theia
 
-inline theia::Messenger::ID theia::Messenger::get_id() {
+inline theia::Hermes &theia::Hermes::instance() {
+    static Hermes instance;
+    return instance;
+}
+
+inline theia::Hermes::ID theia::Hermes::get_id() {
     if (recycled_ids_.empty()) return next_id_++;
 
     const auto id = recycled_ids_.back();
@@ -78,7 +85,7 @@ inline theia::Messenger::ID theia::Messenger::get_id() {
     return id;
 }
 
-inline void theia::Messenger::release_id(const ID id) {
+inline void theia::Hermes::release_id(const ID id) {
     for (auto &receivers : receivers_ | std::views::values)
         if (receivers.size() > id) receivers[id] = nullptr;
 
@@ -90,7 +97,7 @@ inline void theia::Messenger::release_id(const ID id) {
 
 template <typename T, typename Func>
     requires theia::HashHermesId<T> and std::invocable<Func, const T *>
-void theia::Messenger::subscribe(ID id, Func &&f) {
+void theia::Hermes::subscribe(ID id, Func &&f) {
     auto &receivers = receivers_[T::HERMES_ID];
     if (receivers.size() <= id) receivers.resize(id + 1);
     receivers[id] = [f = std::forward<Func>(f)](const Payload buffer) {
@@ -100,14 +107,14 @@ void theia::Messenger::subscribe(ID id, Func &&f) {
 
 template <typename T>
     requires theia::HashHermesId<T>
-void theia::Messenger::unsubscribe(ID id) {
+void theia::Hermes::unsubscribe(ID id) {
     auto &receivers = receivers_[T::HERMES_ID];
     if (receivers.size() > id) receivers[id] = nullptr;
 }
 
 template <typename T, typename... Args>
     requires theia::HashHermesId<T>
-void theia::Messenger::publish(Args &&...args) {
+void theia::Hermes::publish(Args &&...args) {
     const auto payload = make_payload_<T>(std::forward<Args>(args)...);
     if (auto cap_id_opt = captures_[T::HERMES_ID]; cap_id_opt) {
         if (receivers_[T::HERMES_ID].size() > *cap_id_opt) {
@@ -122,18 +129,18 @@ void theia::Messenger::publish(Args &&...args) {
 
 template <typename T>
     requires theia::HashHermesId<T>
-void theia::Messenger::capture(ID id) {
+void theia::Hermes::capture(ID id) {
     captures_[T::HERMES_ID] = id;
 }
 
 template <typename T>
     requires theia::HashHermesId<T>
-void theia::Messenger::uncapture(ID id, bool force) {
+void theia::Hermes::uncapture(ID id, bool force) {
     if (force || captures_[T::HERMES_ID] && *captures_[T::HERMES_ID] == id) captures_[T::HERMES_ID].reset();
 }
 
 template <typename T, typename... Args>
-std::span<std::byte> theia::Messenger::make_payload_(Args &&...args) {
+std::span<std::byte> theia::Hermes::make_payload_(Args &&...args) {
     return std::span(reinterpret_cast<std::byte *>(new T{std::forward<Args>(args)...}), sizeof(T));
 }
 

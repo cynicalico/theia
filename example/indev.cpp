@@ -19,10 +19,12 @@ int main(int, char *[]) {
     }
     THEIA_LOG_INFO("OpenGL Version: {}", reinterpret_cast<const char *>(glGetString(GL_VERSION)));
 
-    glfwSetKeyCallback(window->handle(), [](GLFWwindow *window, int key, int, int action, int) {
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-            static_cast<glfwpp::Window *>(glfwGetWindowUserPointer(window))->set_should_close(true);
-        }
+    glfwpp::set_input_callbacks(window->handle());
+
+    const auto hermes_id = theia::Hermes::instance().get_id();
+
+    theia::Hermes::instance().subscribe<glfwpp::event::KeyE>(hermes_id, [&](const auto *e) {
+        if (e->action == GLFW_PRESS && e->key == GLFW_KEY_ESCAPE) window->set_should_close(true);
     });
 
     while (!window->should_close()) {
