@@ -1,8 +1,8 @@
 #include "theia/io.hpp"
+#include "theia/logger.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#include "theia/logger.hpp"
 
 std::tuple<std::vector<std::byte>, int, int> theia::read_image_bytes(const std::filesystem::path &path) {
     int width, height, channels;

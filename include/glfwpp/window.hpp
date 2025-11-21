@@ -12,7 +12,7 @@ struct GLFWwindow;
 struct GLFWmonitor;
 struct GLFWvidmode;
 
-namespace theia {
+namespace glfwpp {
 class Window {
 public:
     explicit Window(GLFWwindow *window);
@@ -162,4 +162,4 @@ private:
 
     std::unordered_map<int, int> hints_;
 };
-} // namespace theia
+} // namespace glfwpp

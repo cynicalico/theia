@@ -10,19 +10,7 @@ struct GLFWmonitor;
 struct GLFWvidmode;
 struct GLFWgammaramp;
 
-namespace theia {
-class GlfwContext {
-public:
-    GlfwContext();
-    ~GlfwContext();
-
-    GlfwContext(const GlfwContext &other) = delete;
-    GlfwContext(GlfwContext &&other) = delete;
-
-    GlfwContext &operator=(const GlfwContext &other) = delete;
-    GlfwContext &operator=(GlfwContext &&other) = delete;
-};
-
+namespace glfwpp {
 class Monitor {
 public:
     explicit Monitor(GLFWmonitor *handle);
@@ -60,4 +48,4 @@ private:
 
 std::optional<Monitor> get_primary_monitor();
 std::vector<Monitor> get_monitors();
-} // namespace theia
+} // namespace glfwpp

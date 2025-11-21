@@ -1,10 +1,10 @@
 #include "theia/theia.hpp"
 
 int main(int, char *[]) {
-    const auto glfw = theia::GlfwContext();
+    const auto glfw = glfwpp::Context();
 
-    const auto monitor = theia::get_primary_monitor();
-    const auto window = theia::WindowBuilder()
+    const auto monitor = glfwpp::get_primary_monitor();
+    const auto window = glfwpp::WindowBuilder()
                             .context_version(4, 6)
                             .opengl_profile(GLFW_OPENGL_CORE_PROFILE)
                             .title("Indev")
@@ -21,7 +21,7 @@ int main(int, char *[]) {
 
     glfwSetKeyCallback(window->handle(), [](GLFWwindow *window, int key, int, int action, int) {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-            static_cast<theia::Window *>(glfwGetWindowUserPointer(window))->set_should_close(true);
+            static_cast<glfwpp::Window *>(glfwGetWindowUserPointer(window))->set_should_close(true);
         }
     });
 

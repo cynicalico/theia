@@ -18,11 +18,13 @@ target_sources(theia
         # for f in sorted(sources):
         #     cog.outl(f'"{f.replace(os.sep, "/")}"')
         # ]]]
-        "src/theia/glfw_raii.cpp"
+        "src/glfwpp/context.cpp"
+        "src/glfwpp/glfwpp.cpp"
+        "src/glfwpp/monitor.cpp"
+        "src/glfwpp/window.cpp"
         "src/theia/io.cpp"
         "src/theia/logger.cpp"
         "src/theia/theia.cpp"
-        "src/theia/window.cpp"
         # [[[end]]]
 
         PUBLIC
@@ -37,11 +39,13 @@ target_sources(theia
         # for f in sorted(headers):
         #     cog.outl(f'"{f.replace(os.sep, "/")}"')
         # ]]]
-        "include/theia/glfw_raii.hpp"
+        "include/glfwpp/context.hpp"
+        "include/glfwpp/glfwpp.hpp"
+        "include/glfwpp/monitor.hpp"
+        "include/glfwpp/window.hpp"
         "include/theia/io.hpp"
         "include/theia/logger.hpp"
         "include/theia/theia.hpp"
-        "include/theia/window.hpp"
         # [[[end]]]
 
         PUBLIC
