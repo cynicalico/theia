@@ -8,9 +8,10 @@
 #include <string>
 #include <unordered_map>
 
-struct GLFWwindow;
+struct GLFWcursor;
 struct GLFWmonitor;
 struct GLFWvidmode;
+struct GLFWwindow;
 
 namespace glfwpp {
 class Window {
@@ -84,6 +85,11 @@ public:
     void set_floating(bool floating);
     void set_focus_on_show(bool focus_on_show);
     void set_mouse_passthrough(bool enabled);
+
+    void set_input_mode(int mode, int value);
+    [[nodiscard]] bool get_input_mode(int mode) const;
+
+    // TODO: cursors
 
     [[nodiscard]] void *user_pointer() const;
     void set_user_pointer(void *ptr);

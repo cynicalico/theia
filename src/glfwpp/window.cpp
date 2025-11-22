@@ -205,6 +205,10 @@ void glfwpp::Window::set_mouse_passthrough(bool enabled) {
     glfwSetWindowAttrib(handle_, GLFW_MOUSE_PASSTHROUGH, enabled ? GLFW_TRUE : GLFW_FALSE);
 }
 
+void glfwpp::Window::set_input_mode(int mode, int value) { glfwSetInputMode(handle_, mode, value); }
+
+bool glfwpp::Window::get_input_mode(int mode) const { return glfwGetInputMode(handle_, mode) == GLFW_TRUE; }
+
 void *glfwpp::Window::user_pointer() const { return glfwGetWindowUserPointer(handle_); }
 
 void glfwpp::Window::set_user_pointer(void *ptr) { glfwSetWindowUserPointer(handle_, ptr); }

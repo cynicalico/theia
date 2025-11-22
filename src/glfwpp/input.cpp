@@ -35,3 +35,7 @@ void glfwpp::set_input_callbacks(GLFWwindow *window) {
         theia::Hermes::instance().publish<event::DropE>(window, count, paths);
     });
 }
+
+bool glfwpp::supports_raw_mouse_motion() { return glfwRawMouseMotionSupported(); }
+
+void glfwpp::set_clipboard_string(const std::string &s) { glfwSetClipboardString(nullptr, s.c_str()); }

@@ -2,6 +2,8 @@
 
 #include "theia/hermes.hpp"
 
+#include <string>
+
 struct GLFWwindow;
 
 namespace glfwpp {
@@ -64,4 +66,8 @@ struct DropE {
 } // namespace event
 
 void set_input_callbacks(GLFWwindow *window);
+
+bool supports_raw_mouse_motion();
+
+void set_clipboard_string(const std::string &s);
 } // namespace glfwpp
