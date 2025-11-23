@@ -15,4 +15,5 @@ PackConstructorInitializers: Never
 IndentPPDirectives: AfterHash
 SortIncludes: CaseInsensitive
 AllowShortIfStatementsOnASingleLine: true
+AlignTrailingComments: false
 ...

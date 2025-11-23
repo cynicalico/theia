@@ -3,6 +3,8 @@
 int main(int, char *[]) {
     const auto glfw = glfwpp::Context();
 
+    glfwpp::set_monitor_callbacks();
+
     const auto monitor = glfwpp::get_primary_monitor();
     const auto window = glfwpp::WindowBuilder()
                             .context_version(4, 6)
@@ -21,8 +23,8 @@ int main(int, char *[]) {
 
     const auto hermes_id = theia::Hermes::instance().get_id();
 
-    theia::Hermes::instance().subscribe<glfwpp::event::KeyE>(hermes_id, [&](const auto *e) {
-        if (e->action == GLFW_PRESS && e->key == GLFW_KEY_ESCAPE) window->set_should_close(true);
+    theia::Hermes::instance().subscribe<glfwpp::event::KeyEvent>(hermes_id, [](auto *e) {
+        if (e->action == GLFW_PRESS && e->key == GLFW_KEY_ESCAPE) e->window.set_should_close(true);
     });
 
     while (!window->should_close()) {

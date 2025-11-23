@@ -1,14 +1,15 @@
 #pragma once
 
+#include "theia/hermes.hpp"
+
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
 #include <optional>
 #include <vector>
-
-struct GLFWmonitor;
-struct GLFWvidmode;
-struct GLFWgammaramp;
 
 namespace glfwpp {
 class Monitor {
@@ -39,6 +40,7 @@ public:
 
     const GLFWgammaramp *gamma_ramp() const;
     void set_gamma_ramp(const GLFWgammaramp &ramp) const;
+    void set_gamma(float gamma) const;
 
     GLFWmonitor *handle() const;
 
@@ -48,4 +50,19 @@ private:
 
 std::optional<Monitor> get_primary_monitor();
 std::vector<Monitor> get_monitors();
+
+namespace event {
+enum class MonitorEventType {
+    Connected = GLFW_CONNECTED,
+    Disconnected = GLFW_DISCONNECTED,
+};
+
+struct MonitorEvent {
+    MAKE_HERMES_ID(glfwpp::event::MonitorEvent);
+    Monitor monitor;
+    MonitorEventType event;
+};
+} // namespace event
+
+void set_monitor_callbacks();
 } // namespace glfwpp

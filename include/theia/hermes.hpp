@@ -29,7 +29,7 @@ template <typename T>
 concept HashHermesId = std::same_as<decltype(T::HERMES_ID), const std::uint32_t>;
 
 class Hermes {
-    using Payload = std::span<const std::byte>;
+    using Payload = std::span<std::byte>;
     using Receiver = std::function<void(Payload)>;
 
 public:
@@ -41,7 +41,7 @@ public:
     void release_id(ID id);
 
     template <typename T, typename Func>
-        requires HashHermesId<T> and std::invocable<Func, const T *>
+        requires HashHermesId<T> and std::invocable<Func, T *>
     void subscribe(ID id, Func &&f);
 
     template <typename T>
@@ -96,13 +96,11 @@ inline void theia::Hermes::release_id(const ID id) {
 }
 
 template <typename T, typename Func>
-    requires theia::HashHermesId<T> and std::invocable<Func, const T *>
+    requires theia::HashHermesId<T> and std::invocable<Func, T *>
 void theia::Hermes::subscribe(ID id, Func &&f) {
     auto &receivers = receivers_[T::HERMES_ID];
     if (receivers.size() <= id) receivers.resize(id + 1);
-    receivers[id] = [f = std::forward<Func>(f)](const Payload buffer) {
-        f(reinterpret_cast<const T *>(buffer.data()));
-    };
+    receivers[id] = [f = std::forward<Func>(f)](const Payload buffer) { f(reinterpret_cast<T *>(buffer.data())); };
 }
 
 template <typename T>

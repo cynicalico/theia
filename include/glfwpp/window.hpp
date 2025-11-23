@@ -2,6 +2,9 @@
 
 #include "theia/hermes.hpp"
 
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
@@ -9,11 +12,6 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-
-struct GLFWcursor;
-struct GLFWmonitor;
-struct GLFWvidmode;
-struct GLFWwindow;
 
 namespace glfwpp {
 class Window {
@@ -57,8 +55,8 @@ public:
 
     void set_icon(const std::filesystem::path &path);
 
-    [[nodiscard]] GLFWmonitor *monitor() const;
-    void set_monitor(GLFWmonitor *monitor, int x_pos, int y_pos, int width, int height, int refresh_rate);
+    [[nodiscard]] GLFWmonitor *monitor() const; // TODO: use glfwpp Monitor
+    void set_monitor(GLFWmonitor *monitor, int xpos, int ypos, int width, int height, int refresh_rate);
 
     [[nodiscard]] float opacity() const;
     void set_opacity(float opacity);
@@ -88,10 +86,28 @@ public:
     void set_focus_on_show(bool focus_on_show);
     void set_mouse_passthrough(bool enabled);
 
-    void set_input_mode(int mode, int value);
+    void set_input_mode(int mode, int value); // TODO: separate these into types of input mode with enum classes
     [[nodiscard]] bool get_input_mode(int mode) const;
 
     // TODO: cursors
+
+    void set_close_callback(GLFWwindowclosefun callback);
+    void set_size_callback(GLFWwindowsizefun callback);
+    void set_framebuffer_size_callback(GLFWframebuffersizefun callback);
+    void set_content_scale_callback(GLFWwindowcontentscalefun callback);
+    void set_pos_callback(GLFWwindowposfun callback);
+    void set_iconify_callback(GLFWwindowiconifyfun callback);
+    void set_maximize_callback(GLFWwindowmaximizefun callback);
+    void set_focus_callback(GLFWwindowfocusfun callback);
+    void set_refresh_callback(GLFWwindowrefreshfun callback);
+
+    void set_key_callback(GLFWkeyfun callback);
+    void set_char_callback(GLFWcharfun callback);
+    void set_cursor_pos_callback(GLFWcursorposfun callback);
+    void set_cursor_enter_callback(GLFWcursorenterfun callback);
+    void set_mouse_button_callback(GLFWmousebuttonfun callback);
+    void set_scroll_callback(GLFWscrollfun callback);
+    void set_drop_callback(GLFWdropfun callback);
 
     [[nodiscard]] void *user_pointer() const;
     void set_user_pointer(void *ptr);
@@ -109,8 +125,8 @@ public:
     // Basic properties
     WindowBuilder &size(glm::ivec2 size);
     WindowBuilder &title(std::string title);
-    WindowBuilder &monitor(GLFWmonitor *monitor);
-    WindowBuilder &share(GLFWwindow *share);
+    WindowBuilder &monitor(GLFWmonitor *monitor); // TODO: Take glfwpp Monitor
+    WindowBuilder &share(GLFWwindow *share); // TODO: Take glfwpp Window
 
     // Window related hints
     WindowBuilder &position(glm::ivec2 position);
@@ -146,14 +162,14 @@ public:
 
     // Monitor related hints
     WindowBuilder &refresh_rate(int refresh_rate);
-    WindowBuilder &match_vidmode(const GLFWvidmode *vidmode);
+    WindowBuilder &match_vidmode(const GLFWvidmode *vidmode); // TODO: Take glfwpp Monitor
 
     // Context related hints
-    WindowBuilder &client_api(int api);
-    WindowBuilder &context_creation_api(int api);
+    WindowBuilder &client_api(int api); // TODO: enum class for options
+    WindowBuilder &context_creation_api(int api); // TODO: enum class for options
     WindowBuilder &context_version(int major, int minor);
-    WindowBuilder &context_robustness(int robustness);
-    WindowBuilder &context_release_behavior(int behavior);
+    WindowBuilder &context_robustness(int robustness); // TODO: enum class for options
+    WindowBuilder &context_release_behavior(int behavior); // TODO: enum class for options
     WindowBuilder &context_no_error(bool no_error);
     WindowBuilder &opengl_profile(int profile);
     WindowBuilder &opengl_forward_compat(bool forward_compat);
@@ -172,62 +188,62 @@ private:
 };
 
 namespace event {
-struct WindowCloseE {
-    MAKE_HERMES_ID(glfwpp::event::WindowCloseE);
-    GLFWwindow *window;
+struct WindowCloseEvent {
+    MAKE_HERMES_ID(glfwpp::event::WindowCloseEvent);
+    Window window;
 };
 
-struct WindowSizeE {
-    MAKE_HERMES_ID(glfwpp::event::WindowSizeE);
-    GLFWwindow *window;
+struct WindowSizeEvent {
+    MAKE_HERMES_ID(glfwpp::event::WindowSizeEvent);
+    Window window;
     int width;
     int height;
 };
 
-struct FramebufferSizeE {
-    MAKE_HERMES_ID(glfwpp::event::FramebufferSizeE);
-    GLFWwindow *window;
+struct FramebufferSizeEvent {
+    MAKE_HERMES_ID(glfwpp::event::FramebufferSizeEvent);
+    Window window;
     int width;
     int height;
 };
 
-struct WindowContentScaleE {
-    MAKE_HERMES_ID(glfwpp::event::WindowContentScaleE);
-    GLFWwindow *window;
+struct WindowContentScaleEvent {
+    MAKE_HERMES_ID(glfwpp::event::WindowContentScaleEvent);
+    Window window;
     float xscale;
     float yscale;
 };
 
-struct WindowPosE {
-    MAKE_HERMES_ID(glfwpp::event::WindowPosE);
-    GLFWwindow *window;
+struct WindowPosEvent {
+    MAKE_HERMES_ID(glfwpp::event::WindowPosEvent);
+    Window window;
     int xpos;
     int ypos;
 };
 
-struct WindowIconifyE {
-    MAKE_HERMES_ID(glfwpp::event::WindowIconifyE);
-    GLFWwindow *window;
+struct WindowIconifyEvent {
+    MAKE_HERMES_ID(glfwpp::event::WindowIconifyEvent);
+    Window window;
     bool iconified;
 };
 
-struct WindowMaximizeE {
-    MAKE_HERMES_ID(glfwpp::event::WindowMaximizeE);
-    GLFWwindow *window;
+struct WindowMaximizeEvent {
+    MAKE_HERMES_ID(glfwpp::event::WindowMaximizeEvent);
+    Window window;
     bool maximized;
 };
 
-struct WindowFocusE {
-    MAKE_HERMES_ID(glfwpp::event::WindowFocusE);
-    GLFWwindow *window;
+struct WindowFocusEvent {
+    MAKE_HERMES_ID(glfwpp::event::WindowFocusEvent);
+    Window window;
     bool focused;
 };
 
-struct WindowRefreshE {
-    MAKE_HERMES_ID(glfwpp::event::WindowRefreshE);
-    GLFWwindow *window;
+struct WindowRefreshEvent {
+    MAKE_HERMES_ID(glfwpp::event::WindowRefreshEvent);
+    Window window;
 };
 } // namespace event
 
-void set_window_callbacks(GLFWwindow *window);
+void set_window_callbacks(Window &window);
 } // namespace glfwpp

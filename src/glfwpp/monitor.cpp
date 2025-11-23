@@ -1,8 +1,5 @@
 #include "glfwpp/monitor.hpp"
 
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-
 glfwpp::Monitor::Monitor(GLFWmonitor *handle)
     : handle_(handle) {}
 
@@ -77,6 +74,8 @@ const GLFWgammaramp *glfwpp::Monitor::gamma_ramp() const { return glfwGetGammaRa
 
 void glfwpp::Monitor::set_gamma_ramp(const GLFWgammaramp &ramp) const { glfwSetGammaRamp(handle_, &ramp); }
 
+void glfwpp::Monitor::set_gamma(float gamma) const { glfwSetGamma(handle_, gamma); }
+
 GLFWmonitor *glfwpp::Monitor::handle() const { return handle_; }
 
 std::optional<glfwpp::Monitor> glfwpp::get_primary_monitor() {
@@ -96,4 +95,11 @@ std::vector<glfwpp::Monitor> glfwpp::get_monitors() {
         result.emplace_back(list[i]);
     }
     return result;
+}
+
+void glfwpp::set_monitor_callbacks() {
+    glfwSetMonitorCallback([](GLFWmonitor *monitor, int event) {
+        theia::Hermes::instance().publish<event::MonitorEvent>(Monitor(monitor),
+                                                               static_cast<event::MonitorEventType>(event));
+    });
 }

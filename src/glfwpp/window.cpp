@@ -1,17 +1,14 @@
 #include "glfwpp/window.hpp"
 #include "glfwpp/input.hpp"
+#include "glfwpp/monitor.hpp"
 #include "theia/io.hpp"
-
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
 
 #include <stdexcept>
 
 glfwpp::Window::Window(GLFWwindow *window)
     : handle_(window) {
-    set_user_pointer(this);
-    set_window_callbacks(handle_);
-    set_input_callbacks(handle_);
+    set_window_callbacks(*this);
+    set_input_callbacks(*this);
 }
 
 glfwpp::Window::~Window() {
@@ -23,9 +20,8 @@ glfwpp::Window::~Window() {
 glfwpp::Window::Window(Window &&other) noexcept
     : handle_(other.handle_) {
     other.handle_ = nullptr;
-    set_user_pointer(this);
-    set_window_callbacks(handle_);
-    set_input_callbacks(handle_);
+    set_window_callbacks(*this);
+    set_input_callbacks(*this);
 }
 
 glfwpp::Window &glfwpp::Window::operator=(Window &&other) noexcept {
@@ -35,9 +31,8 @@ glfwpp::Window &glfwpp::Window::operator=(Window &&other) noexcept {
         }
         handle_ = other.handle_;
         other.handle_ = nullptr;
-        set_user_pointer(this);
-        set_window_callbacks(handle_);
-        set_input_callbacks(handle_);
+        set_window_callbacks(*this);
+        set_input_callbacks(*this);
     }
     return *this;
 }
@@ -130,8 +125,8 @@ void glfwpp::Window::set_icon(const std::filesystem::path &path) {
 
 GLFWmonitor *glfwpp::Window::monitor() const { return glfwGetWindowMonitor(handle_); }
 
-void glfwpp::Window::set_monitor(GLFWmonitor *monitor, int x_pos, int y_pos, int width, int height, int refresh_rate) {
-    glfwSetWindowMonitor(handle_, monitor, x_pos, y_pos, width, height, refresh_rate);
+void glfwpp::Window::set_monitor(GLFWmonitor *monitor, int xpos, int ypos, int width, int height, int refresh_rate) {
+    glfwSetWindowMonitor(handle_, monitor, xpos, ypos, width, height, refresh_rate);
 }
 
 float glfwpp::Window::opacity() const { return glfwGetWindowOpacity(handle_); }
@@ -211,6 +206,52 @@ void glfwpp::Window::set_mouse_passthrough(bool enabled) {
 void glfwpp::Window::set_input_mode(int mode, int value) { glfwSetInputMode(handle_, mode, value); }
 
 bool glfwpp::Window::get_input_mode(int mode) const { return glfwGetInputMode(handle_, mode) == GLFW_TRUE; }
+
+void glfwpp::Window::set_close_callback(GLFWwindowclosefun callback) { glfwSetWindowCloseCallback(handle_, callback); }
+
+void glfwpp::Window::set_size_callback(GLFWwindowsizefun callback) { glfwSetWindowSizeCallback(handle_, callback); }
+
+void glfwpp::Window::set_framebuffer_size_callback(GLFWframebuffersizefun callback) {
+    glfwSetFramebufferSizeCallback(handle_, callback);
+}
+
+void glfwpp::Window::set_content_scale_callback(GLFWwindowcontentscalefun callback) {
+    glfwSetWindowContentScaleCallback(handle_, callback);
+}
+
+void glfwpp::Window::set_pos_callback(GLFWwindowposfun callback) { glfwSetWindowPosCallback(handle_, callback); }
+
+void glfwpp::Window::set_iconify_callback(GLFWwindowiconifyfun callback) {
+    glfwSetWindowIconifyCallback(handle_, callback);
+}
+
+void glfwpp::Window::set_maximize_callback(GLFWwindowmaximizefun callback) {
+    glfwSetWindowMaximizeCallback(handle_, callback);
+}
+
+void glfwpp::Window::set_focus_callback(GLFWwindowfocusfun callback) { glfwSetWindowFocusCallback(handle_, callback); }
+
+void glfwpp::Window::set_refresh_callback(GLFWwindowrefreshfun callback) {
+    glfwSetWindowRefreshCallback(handle_, callback);
+}
+
+void glfwpp::Window::set_key_callback(GLFWkeyfun callback) { glfwSetKeyCallback(handle_, callback); }
+
+void glfwpp::Window::set_char_callback(GLFWcharfun callback) { glfwSetCharCallback(handle_, callback); }
+
+void glfwpp::Window::set_cursor_pos_callback(GLFWcursorposfun callback) { glfwSetCursorPosCallback(handle_, callback); }
+
+void glfwpp::Window::set_cursor_enter_callback(GLFWcursorenterfun callback) {
+    glfwSetCursorEnterCallback(handle_, callback);
+}
+
+void glfwpp::Window::set_mouse_button_callback(GLFWmousebuttonfun callback) {
+    glfwSetMouseButtonCallback(handle_, callback);
+}
+
+void glfwpp::Window::set_scroll_callback(GLFWscrollfun callback) { glfwSetScrollCallback(handle_, callback); }
+
+void glfwpp::Window::set_drop_callback(GLFWdropfun callback) { glfwSetDropCallback(handle_, callback); }
 
 void *glfwpp::Window::user_pointer() const { return glfwGetWindowUserPointer(handle_); }
 
@@ -457,38 +498,38 @@ std::unique_ptr<glfwpp::Window> glfwpp::WindowBuilder::build() const {
     return std::make_unique<Window>(window);
 }
 
-void glfwpp::set_window_callbacks(GLFWwindow *window) {
-    glfwSetWindowCloseCallback(
-        window, [](GLFWwindow *window_) { theia::Hermes::instance().publish<event::WindowCloseE>(window_); });
+void glfwpp::set_window_callbacks(Window &window) {
+    window.set_close_callback(
+        [](GLFWwindow *window_) { theia::Hermes::instance().publish<event::WindowCloseEvent>(Window(window_)); });
 
-    glfwSetWindowSizeCallback(window, [](GLFWwindow *window_, int width, int height) {
-        theia::Hermes::instance().publish<event::WindowSizeE>(window_, width, height);
+    window.set_size_callback([](GLFWwindow *window_, int width, int height) {
+        theia::Hermes::instance().publish<event::WindowSizeEvent>(Window(window_), width, height);
     });
 
-    glfwSetFramebufferSizeCallback(window, [](GLFWwindow *window_, int width, int height) {
-        theia::Hermes::instance().publish<event::FramebufferSizeE>(window_, width, height);
+    window.set_framebuffer_size_callback([](GLFWwindow *window_, int width, int height) {
+        theia::Hermes::instance().publish<event::FramebufferSizeEvent>(Window(window_), width, height);
     });
 
-    glfwSetWindowContentScaleCallback(window, [](GLFWwindow *window_, float xscale, float yscale) {
-        theia::Hermes::instance().publish<event::WindowContentScaleE>(window_, xscale, yscale);
+    window.set_content_scale_callback([](GLFWwindow *window_, float xscale, float yscale) {
+        theia::Hermes::instance().publish<event::WindowContentScaleEvent>(Window(window_), xscale, yscale);
     });
 
-    glfwSetWindowPosCallback(window, [](GLFWwindow *window_, int xpos, int ypos) {
-        theia::Hermes::instance().publish<event::WindowPosE>(window_, xpos, ypos);
+    window.set_pos_callback([](GLFWwindow *window_, int xpos, int ypos) {
+        theia::Hermes::instance().publish<event::WindowPosEvent>(Window(window_), xpos, ypos);
     });
 
-    glfwSetWindowIconifyCallback(window, [](GLFWwindow *window_, int iconified) {
-        theia::Hermes::instance().publish<event::WindowIconifyE>(window_, iconified == GLFW_TRUE);
+    window.set_iconify_callback([](GLFWwindow *window_, int iconified) {
+        theia::Hermes::instance().publish<event::WindowIconifyEvent>(Window(window_), iconified == GLFW_TRUE);
     });
 
-    glfwSetWindowMaximizeCallback(window, [](GLFWwindow *window_, int maximized) {
-        theia::Hermes::instance().publish<event::WindowMaximizeE>(window_, maximized == GLFW_TRUE);
+    window.set_maximize_callback([](GLFWwindow *window_, int maximized) {
+        theia::Hermes::instance().publish<event::WindowMaximizeEvent>(Window(window_), maximized == GLFW_TRUE);
     });
 
-    glfwSetWindowFocusCallback(window, [](GLFWwindow *window_, int focused) {
-        theia::Hermes::instance().publish<event::WindowFocusE>(window_, focused == GLFW_TRUE);
+    window.set_focus_callback([](GLFWwindow *window_, int focused) {
+        theia::Hermes::instance().publish<event::WindowFocusEvent>(Window(window_), focused == GLFW_TRUE);
     });
 
-    glfwSetWindowRefreshCallback(
-        window, [](GLFWwindow *window_) { theia::Hermes::instance().publish<event::WindowRefreshE>(window_); });
+    window.set_refresh_callback(
+        [](GLFWwindow *window_) { theia::Hermes::instance().publish<event::WindowRefreshEvent>(Window(window_)); });
 }

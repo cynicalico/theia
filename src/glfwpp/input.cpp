@@ -1,38 +1,35 @@
 #include "glfwpp/input.hpp"
 
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-
-void glfwpp::set_input_callbacks(GLFWwindow *window) {
-    glfwSetKeyCallback(window, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
-        theia::Hermes::instance().publish<event::KeyE>(window, key, scancode, action, mods);
+void glfwpp::set_input_callbacks(Window &window) {
+    window.set_key_callback([](GLFWwindow *window_, int key, int scancode, int action, int mods) {
+        theia::Hermes::instance().publish<event::KeyEvent>(Window(window_), key, scancode, action, mods);
     });
 
-    glfwSetCharCallback(window, [](GLFWwindow *window, unsigned int codepoint) {
-        theia::Hermes::instance().publish<event::CharE>(window, codepoint);
+    window.set_char_callback([](GLFWwindow *window_, unsigned int codepoint) {
+        theia::Hermes::instance().publish<event::CharEvent>(Window(window_), codepoint);
     });
 
-    glfwSetCursorPosCallback(window, [](GLFWwindow *window, double xpos, double ypos) {
-        theia::Hermes::instance().publish<event::CursorPosE>(window, xpos, ypos);
+    window.set_cursor_pos_callback([](GLFWwindow *window_, double xpos, double ypos) {
+        theia::Hermes::instance().publish<event::CursorPosEvent>(Window(window_), xpos, ypos);
     });
 
-    glfwSetCursorEnterCallback(window, [](GLFWwindow *window, int entered) {
-        theia::Hermes::instance().publish<event::CursorEnterE>(window, entered == GLFW_TRUE);
+    window.set_cursor_enter_callback([](GLFWwindow *window_, int entered) {
+        theia::Hermes::instance().publish<event::CursorEnterEvent>(Window(window_), entered == GLFW_TRUE);
     });
 
-    glfwSetMouseButtonCallback(window, [](GLFWwindow *window, int button, int action, int mods) {
-        theia::Hermes::instance().publish<event::MouseButtonE>(window, button, action, mods);
+    window.set_mouse_button_callback([](GLFWwindow *window_, int button, int action, int mods) {
+        theia::Hermes::instance().publish<event::MouseButtonEvent>(Window(window_), button, action, mods);
     });
 
-    glfwSetScrollCallback(window, [](GLFWwindow *window, double xoffset, double yoffset) {
-        theia::Hermes::instance().publish<event::ScrollE>(window, xoffset, yoffset);
+    window.set_scroll_callback([](GLFWwindow *window_, double xoffset, double yoffset) {
+        theia::Hermes::instance().publish<event::ScrollEvent>(Window(window_), xoffset, yoffset);
     });
 
-    glfwSetJoystickCallback(
-        [](int joy, int event) { theia::Hermes::instance().publish<event::JoystickE>(joy, event); });
+    // glfwSetJoystickCallback(
+    //     [](int joy, int event) { theia::Hermes::instance().publish<event::JoystickE>(joy, event); });
 
-    glfwSetDropCallback(window, [](GLFWwindow *window, int count, const char **paths) {
-        theia::Hermes::instance().publish<event::DropE>(window, count, paths);
+    window.set_drop_callback([](GLFWwindow *window_, int count, const char **paths) {
+        theia::Hermes::instance().publish<event::DropEvent>(Window(window_), count, paths);
     });
 }
 
