@@ -1,5 +1,7 @@
 #pragma once
 
+#include "theia/hermes.hpp"
+
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
@@ -168,4 +170,64 @@ private:
 
     std::unordered_map<int, int> hints_;
 };
+
+namespace event {
+struct WindowCloseE {
+    MAKE_HERMES_ID(glfwpp::event::WindowCloseE);
+    GLFWwindow *window;
+};
+
+struct WindowSizeE {
+    MAKE_HERMES_ID(glfwpp::event::WindowSizeE);
+    GLFWwindow *window;
+    int width;
+    int height;
+};
+
+struct FramebufferSizeE {
+    MAKE_HERMES_ID(glfwpp::event::FramebufferSizeE);
+    GLFWwindow *window;
+    int width;
+    int height;
+};
+
+struct WindowContentScaleE {
+    MAKE_HERMES_ID(glfwpp::event::WindowContentScaleE);
+    GLFWwindow *window;
+    float xscale;
+    float yscale;
+};
+
+struct WindowPosE {
+    MAKE_HERMES_ID(glfwpp::event::WindowPosE);
+    GLFWwindow *window;
+    int xpos;
+    int ypos;
+};
+
+struct WindowIconifyE {
+    MAKE_HERMES_ID(glfwpp::event::WindowIconifyE);
+    GLFWwindow *window;
+    bool iconified;
+};
+
+struct WindowMaximizeE {
+    MAKE_HERMES_ID(glfwpp::event::WindowMaximizeE);
+    GLFWwindow *window;
+    bool maximized;
+};
+
+struct WindowFocusE {
+    MAKE_HERMES_ID(glfwpp::event::WindowFocusE);
+    GLFWwindow *window;
+    bool focused;
+};
+
+struct WindowRefreshE {
+    MAKE_HERMES_ID(glfwpp::event::WindowRefreshE);
+    GLFWwindow *window;
+};
+} // namespace event
+
+void set_window_callbacks(GLFWwindow *window);
 } // namespace glfwpp

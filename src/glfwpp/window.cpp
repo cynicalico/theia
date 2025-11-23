@@ -10,6 +10,7 @@
 glfwpp::Window::Window(GLFWwindow *window)
     : handle_(window) {
     set_user_pointer(this);
+    set_window_callbacks(handle_);
     set_input_callbacks(handle_);
 }
 
@@ -23,6 +24,7 @@ glfwpp::Window::Window(Window &&other) noexcept
     : handle_(other.handle_) {
     other.handle_ = nullptr;
     set_user_pointer(this);
+    set_window_callbacks(handle_);
     set_input_callbacks(handle_);
 }
 
@@ -34,6 +36,7 @@ glfwpp::Window &glfwpp::Window::operator=(Window &&other) noexcept {
         handle_ = other.handle_;
         other.handle_ = nullptr;
         set_user_pointer(this);
+        set_window_callbacks(handle_);
         set_input_callbacks(handle_);
     }
     return *this;
@@ -452,4 +455,40 @@ std::unique_ptr<glfwpp::Window> glfwpp::WindowBuilder::build() const {
     }
 
     return std::make_unique<Window>(window);
+}
+
+void glfwpp::set_window_callbacks(GLFWwindow *window) {
+    glfwSetWindowCloseCallback(
+        window, [](GLFWwindow *window_) { theia::Hermes::instance().publish<event::WindowCloseE>(window_); });
+
+    glfwSetWindowSizeCallback(window, [](GLFWwindow *window_, int width, int height) {
+        theia::Hermes::instance().publish<event::WindowSizeE>(window_, width, height);
+    });
+
+    glfwSetFramebufferSizeCallback(window, [](GLFWwindow *window_, int width, int height) {
+        theia::Hermes::instance().publish<event::FramebufferSizeE>(window_, width, height);
+    });
+
+    glfwSetWindowContentScaleCallback(window, [](GLFWwindow *window_, float xscale, float yscale) {
+        theia::Hermes::instance().publish<event::WindowContentScaleE>(window_, xscale, yscale);
+    });
+
+    glfwSetWindowPosCallback(window, [](GLFWwindow *window_, int xpos, int ypos) {
+        theia::Hermes::instance().publish<event::WindowPosE>(window_, xpos, ypos);
+    });
+
+    glfwSetWindowIconifyCallback(window, [](GLFWwindow *window_, int iconified) {
+        theia::Hermes::instance().publish<event::WindowIconifyE>(window_, iconified == GLFW_TRUE);
+    });
+
+    glfwSetWindowMaximizeCallback(window, [](GLFWwindow *window_, int maximized) {
+        theia::Hermes::instance().publish<event::WindowMaximizeE>(window_, maximized == GLFW_TRUE);
+    });
+
+    glfwSetWindowFocusCallback(window, [](GLFWwindow *window_, int focused) {
+        theia::Hermes::instance().publish<event::WindowFocusE>(window_, focused == GLFW_TRUE);
+    });
+
+    glfwSetWindowRefreshCallback(
+        window, [](GLFWwindow *window_) { theia::Hermes::instance().publish<event::WindowRefreshE>(window_); });
 }
