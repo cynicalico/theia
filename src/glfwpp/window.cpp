@@ -1,6 +1,5 @@
 #include "glfwpp/window.hpp"
 #include "glfwpp/input.hpp"
-#include "glfwpp/monitor.hpp"
 #include "theia/io.hpp"
 
 #include <stdexcept>
@@ -123,10 +122,16 @@ void glfwpp::Window::set_icon(const std::filesystem::path &path) {
     if (!images.empty()) glfwSetWindowIcon(handle_, images.size(), images.data());
 }
 
-GLFWmonitor *glfwpp::Window::monitor() const { return glfwGetWindowMonitor(handle_); }
+std::optional<glfwpp::Monitor> glfwpp::Window::monitor() const {
+    GLFWmonitor *glfw_monitor = glfwGetWindowMonitor(handle_);
+    if (!glfw_monitor) return std::nullopt;
+    return Monitor{glfw_monitor};
+}
 
-void glfwpp::Window::set_monitor(GLFWmonitor *monitor, int xpos, int ypos, int width, int height, int refresh_rate) {
-    glfwSetWindowMonitor(handle_, monitor, xpos, ypos, width, height, refresh_rate);
+void glfwpp::Window::set_monitor(
+    std::optional<Monitor> monitor, int xpos, int ypos, int width, int height, int refresh_rate) {
+    GLFWmonitor *glfw_monitor = monitor ? monitor->handle() : nullptr;
+    glfwSetWindowMonitor(handle_, glfw_monitor, xpos, ypos, width, height, refresh_rate);
 }
 
 float glfwpp::Window::opacity() const { return glfwGetWindowOpacity(handle_); }
@@ -203,9 +208,21 @@ void glfwpp::Window::set_mouse_passthrough(bool enabled) {
     glfwSetWindowAttrib(handle_, GLFW_MOUSE_PASSTHROUGH, enabled ? GLFW_TRUE : GLFW_FALSE);
 }
 
-void glfwpp::Window::set_input_mode(int mode, int value) { glfwSetInputMode(handle_, mode, value); }
+void glfwpp::Window::set_input_mode(InputMode mode, bool value) {
+    glfwSetInputMode(handle_, static_cast<int>(mode), value ? GLFW_TRUE : GLFW_FALSE);
+}
 
-bool glfwpp::Window::get_input_mode(int mode) const { return glfwGetInputMode(handle_, mode) == GLFW_TRUE; }
+bool glfwpp::Window::get_input_mode(InputMode mode) const {
+    return glfwGetInputMode(handle_, static_cast<int>(mode)) == GLFW_TRUE;
+}
+
+void glfwpp::Window::set_cursor_mode(CursorMode mode) {
+    glfwSetInputMode(handle_, GLFW_CURSOR, static_cast<int>(mode));
+}
+
+glfwpp::CursorMode glfwpp::Window::get_cursor_mode() const {
+    return static_cast<CursorMode>(glfwGetInputMode(handle_, GLFW_CURSOR));
+}
 
 void glfwpp::Window::set_close_callback(GLFWwindowclosefun callback) { glfwSetWindowCloseCallback(handle_, callback); }
 
@@ -272,13 +289,13 @@ glfwpp::WindowBuilder &glfwpp::WindowBuilder::title(std::string title) {
     return *this;
 }
 
-glfwpp::WindowBuilder &glfwpp::WindowBuilder::monitor(GLFWmonitor *monitor) {
-    monitor_ = monitor;
+glfwpp::WindowBuilder &glfwpp::WindowBuilder::monitor(const Monitor &monitor) {
+    monitor_ = monitor.handle();
     return *this;
 }
 
-glfwpp::WindowBuilder &glfwpp::WindowBuilder::share(GLFWwindow *share) {
-    share_ = share;
+glfwpp::WindowBuilder &glfwpp::WindowBuilder::share(const Window &share) {
+    share_ = share.handle();
     return *this;
 }
 
@@ -428,22 +445,22 @@ glfwpp::WindowBuilder &glfwpp::WindowBuilder::refresh_rate(int refresh_rate) {
     return *this;
 }
 
-glfwpp::WindowBuilder &glfwpp::WindowBuilder::match_vidmode(const GLFWvidmode *vidmode) {
-    red_bits(vidmode->redBits);
-    green_bits(vidmode->greenBits);
-    blue_bits(vidmode->blueBits);
-    refresh_rate(vidmode->refreshRate);
-    size({vidmode->width, vidmode->height});
+glfwpp::WindowBuilder &glfwpp::WindowBuilder::match_vidmode(const Monitor &monitor) {
+    red_bits(monitor.red_bits());
+    green_bits(monitor.green_bits());
+    blue_bits(monitor.blue_bits());
+    refresh_rate(monitor.refresh_rate());
+    size(monitor.size());
     return *this;
 }
 
-glfwpp::WindowBuilder &glfwpp::WindowBuilder::client_api(int api) {
-    hints_[GLFW_CLIENT_API] = api;
+glfwpp::WindowBuilder &glfwpp::WindowBuilder::client_api(ClientApi api) {
+    hints_[GLFW_CLIENT_API] = static_cast<int>(api);
     return *this;
 }
 
-glfwpp::WindowBuilder &glfwpp::WindowBuilder::context_creation_api(int api) {
-    hints_[GLFW_CONTEXT_CREATION_API] = api;
+glfwpp::WindowBuilder &glfwpp::WindowBuilder::context_creation_api(ContextCreationApi api) {
+    hints_[GLFW_CONTEXT_CREATION_API] = static_cast<int>(api);
     return *this;
 }
 
@@ -453,13 +470,13 @@ glfwpp::WindowBuilder &glfwpp::WindowBuilder::context_version(int major, int min
     return *this;
 }
 
-glfwpp::WindowBuilder &glfwpp::WindowBuilder::context_robustness(int robustness) {
-    hints_[GLFW_CONTEXT_ROBUSTNESS] = robustness;
+glfwpp::WindowBuilder &glfwpp::WindowBuilder::context_robustness(ContextRobustness robustness) {
+    hints_[GLFW_CONTEXT_ROBUSTNESS] = static_cast<int>(robustness);
     return *this;
 }
 
-glfwpp::WindowBuilder &glfwpp::WindowBuilder::context_release_behavior(int behavior) {
-    hints_[GLFW_CONTEXT_RELEASE_BEHAVIOR] = behavior;
+glfwpp::WindowBuilder &glfwpp::WindowBuilder::context_release_behavior(ReleaseBehavior behavior) {
+    hints_[GLFW_CONTEXT_RELEASE_BEHAVIOR] = static_cast<int>(behavior);
     return *this;
 }
 
@@ -468,8 +485,8 @@ glfwpp::WindowBuilder &glfwpp::WindowBuilder::context_no_error(bool no_error) {
     return *this;
 }
 
-glfwpp::WindowBuilder &glfwpp::WindowBuilder::opengl_profile(int profile) {
-    hints_[GLFW_OPENGL_PROFILE] = profile;
+glfwpp::WindowBuilder &glfwpp::WindowBuilder::opengl_profile(OpenGLProfile profile) {
+    hints_[GLFW_OPENGL_PROFILE] = static_cast<int>(profile);
     return *this;
 }
 

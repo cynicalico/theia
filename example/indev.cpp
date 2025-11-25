@@ -8,10 +8,10 @@ int main(int, char *[]) {
     const auto monitor = glfwpp::get_primary_monitor();
     const auto window = glfwpp::WindowBuilder()
                             .context_version(4, 6)
-                            .opengl_profile(GLFW_OPENGL_CORE_PROFILE)
+                            .opengl_profile(glfwpp::OpenGLProfile::Core)
                             .title("Indev")
-                            .monitor(monitor->handle())
-                            .match_vidmode(monitor->vidmode())
+                            .monitor(*monitor)
+                            .match_vidmode(*monitor)
                             .build();
     window->set_icon("assets/gem_16x16.png");
 
