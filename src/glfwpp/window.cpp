@@ -11,9 +11,7 @@ glfwpp::Window::Window(GLFWwindow *window)
 }
 
 glfwpp::Window::~Window() {
-    if (handle_) {
-        glfwDestroyWindow(handle_);
-    }
+    if (handle_) glfwDestroyWindow(handle_);
 }
 
 glfwpp::Window::Window(Window &&other) noexcept
@@ -25,9 +23,7 @@ glfwpp::Window::Window(Window &&other) noexcept
 
 glfwpp::Window &glfwpp::Window::operator=(Window &&other) noexcept {
     if (this != &other) {
-        if (handle_) {
-            glfwDestroyWindow(handle_);
-        }
+        if (handle_) glfwDestroyWindow(handle_);
         handle_ = other.handle_;
         other.handle_ = nullptr;
         set_window_callbacks(*this);
@@ -223,6 +219,8 @@ void glfwpp::Window::set_cursor_mode(CursorMode mode) {
 glfwpp::CursorMode glfwpp::Window::get_cursor_mode() const {
     return static_cast<CursorMode>(glfwGetInputMode(handle_, GLFW_CURSOR));
 }
+
+void glfwpp::Window::set_cursor(const Cursor &cursor) { glfwSetCursor(handle_, cursor.handle()); }
 
 void glfwpp::Window::set_close_callback(GLFWwindowclosefun callback) { glfwSetWindowCloseCallback(handle_, callback); }
 

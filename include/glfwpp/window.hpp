@@ -1,5 +1,6 @@
 #pragma once
 
+#include "glfwpp/cursor.hpp"
 #include "glfwpp/monitor.hpp"
 #include "theia/hermes.hpp"
 
@@ -108,7 +109,7 @@ public:
     void set_cursor_mode(CursorMode mode);
     [[nodiscard]] CursorMode get_cursor_mode() const;
 
-    // TODO: cursors
+    void set_cursor(const Cursor &cursor);
 
     void set_close_callback(GLFWwindowclosefun callback);
     void set_size_callback(GLFWwindowsizefun callback);

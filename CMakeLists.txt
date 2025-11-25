@@ -19,6 +19,7 @@ target_sources(theia
         #     cog.outl(f'"{f.replace(os.sep, "/")}"')
         # ]]]
         "src/glfwpp/context.cpp"
+        "src/glfwpp/cursor.cpp"
         "src/glfwpp/glfwpp.cpp"
         "src/glfwpp/input.cpp"
         "src/glfwpp/monitor.cpp"
@@ -41,6 +42,7 @@ target_sources(theia
         #     cog.outl(f'"{f.replace(os.sep, "/")}"')
         # ]]]
         "include/glfwpp/context.hpp"
+        "include/glfwpp/cursor.hpp"
         "include/glfwpp/glfwpp.hpp"
         "include/glfwpp/input.hpp"
         "include/glfwpp/monitor.hpp"

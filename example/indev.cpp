@@ -21,10 +21,32 @@ int main(int, char *[]) {
     }
     THEIA_LOG_INFO("OpenGL Version: {}", reinterpret_cast<const char *>(glGetString(GL_VERSION)));
 
+    const auto arrow = glfwpp::Cursor(glfwpp::CursorShape::Arrow);
+    const auto resize_ew = glfwpp::Cursor(glfwpp::CursorShape::ResizeEW);
+    const auto resize_ns = glfwpp::Cursor(glfwpp::CursorShape::ResizeNS);
+
     const auto hermes_id = theia::Hermes::instance().get_id();
 
-    theia::Hermes::instance().subscribe<glfwpp::event::KeyEvent>(hermes_id, [](auto *e) {
-        if (e->action == GLFW_PRESS && e->key == GLFW_KEY_ESCAPE) e->window.set_should_close(true);
+    theia::Hermes::instance().subscribe<glfwpp::event::KeyEvent>(hermes_id, [&](auto *e) {
+        switch (e->action) {
+        case GLFW_PRESS:
+            switch (e->key) {
+            case GLFW_KEY_ESCAPE:
+                e->window.set_should_close(true);
+                break;
+            case GLFW_KEY_1:
+                e->window.set_cursor(arrow);
+                break;
+            case GLFW_KEY_2:
+                e->window.set_cursor(resize_ew);
+                break;
+            case GLFW_KEY_3:
+                e->window.set_cursor(resize_ns);
+                break;
+            default:;
+            }
+        default:;
+        }
     });
 
     while (!window->should_close()) {
