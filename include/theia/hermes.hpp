@@ -37,7 +37,7 @@ public:
 
     static Hermes &instance();
 
-    ID get_id();
+    ID acquire_id();
     void release_id(ID id);
 
     template <typename T, typename Func>
@@ -77,7 +77,7 @@ inline theia::Hermes &theia::Hermes::instance() {
     return instance;
 }
 
-inline theia::Hermes::ID theia::Hermes::get_id() {
+inline theia::Hermes::ID theia::Hermes::acquire_id() {
     if (recycled_ids_.empty()) return next_id_++;
 
     const auto id = recycled_ids_.back();

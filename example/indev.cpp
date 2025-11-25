@@ -25,7 +25,7 @@ int main(int, char *[]) {
     const auto resize_ew = glfwpp::Cursor(glfwpp::CursorShape::ResizeEW);
     const auto resize_ns = glfwpp::Cursor(glfwpp::CursorShape::ResizeNS);
 
-    const auto hermes_id = theia::Hermes::instance().get_id();
+    const auto hermes_id = theia::Hermes::instance().acquire_id();
 
     theia::Hermes::instance().subscribe<glfwpp::event::KeyEvent>(hermes_id, [&](auto *e) {
         switch (e->action) {
