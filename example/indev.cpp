@@ -5,13 +5,16 @@ int main(int, char *[]) {
 
     glfwpp::set_monitor_callbacks();
 
-    const auto monitor = glfwpp::get_primary_monitor();
+    // const auto monitor =
+    //     glfwpp::get_primary_monitor().or_else([] { return std::optional(glfwpp::get_monitors()[0]); }).value();
     const auto window = glfwpp::WindowBuilder()
                             .context_version(4, 6)
                             .opengl_profile(glfwpp::OpenGLProfile::Core)
                             .title("Indev")
-                            .monitor(*monitor)
-                            .match_vidmode(*monitor)
+                            .size(glm::ivec2{800, 600})
+                            .wayland_app_id("theia")
+                            // .monitor(monitor)
+                            // .match_vidmode(monitor)
                             .build();
     window->set_icon("assets/gem_16x16.png");
 
@@ -19,7 +22,7 @@ int main(int, char *[]) {
     if (gladLoadGL(glfwGetProcAddress) == 0) {
         throw std::runtime_error("Failed to initialize Glad");
     }
-    THEIA_LOG_INFO("OpenGL Version: {}", reinterpret_cast<const char *>(glGetString(GL_VERSION)));
+    THEIA_LOG_DEBUG("OpenGL Version: {}", reinterpret_cast<const char *>(glGetString(GL_VERSION)));
 
     const auto arrow = glfwpp::Cursor(glfwpp::CursorShape::Arrow);
     const auto resize_ew = glfwpp::Cursor(glfwpp::CursorShape::ResizeEW);
@@ -47,13 +50,24 @@ int main(int, char *[]) {
             }
         default:;
         }
+
+        THEIA_LOG_INFO("{}", e->key);
     });
+
+    theia::Dear::init(window->handle());
 
     while (!window->should_close()) {
         glfwPollEvents();
 
         glClear(GL_COLOR_BUFFER_BIT);
 
+        auto &dear = theia::Dear::instance();
+        dear.new_frame();
+        dear.begin("Hello, Dear ImGui!") && [] { ImGui::Text("Text text text"); };
+        dear.render();
+
         window->swap_buffers();
     }
+
+    theia::Dear::shutdown();
 }

@@ -6,7 +6,6 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
@@ -178,7 +177,7 @@ public:
     WindowBuilder &monitor(const Monitor &monitor);
     WindowBuilder &share(const Window &share);
 
-    // Window related hints
+    // Window-related hints
     WindowBuilder &position(glm::ivec2 position);
     WindowBuilder &resizable(bool resizable);
     WindowBuilder &visible(bool visible);
@@ -193,7 +192,7 @@ public:
     WindowBuilder &scale_to_monitor(bool scale_to_monitor);
     WindowBuilder &mouse_passthrough(bool passthrough);
 
-    // Framebuffer related hints
+    // Framebuffer-related hints
     WindowBuilder &red_bits(int bits);
     WindowBuilder &green_bits(int bits);
     WindowBuilder &blue_bits(int bits);
@@ -210,11 +209,11 @@ public:
     WindowBuilder &srgb_capable(bool srgb_capable);
     WindowBuilder &double_buffer(bool double_buffer);
 
-    // Monitor related hints
+    // Monitor-related hints
     WindowBuilder &refresh_rate(int refresh_rate);
     WindowBuilder &match_vidmode(const Monitor &monitor);
 
-    // Context related hints
+    // Context-related hints
     WindowBuilder &client_api(ClientApi api);
     WindowBuilder &context_creation_api(ContextCreationApi api);
     WindowBuilder &context_version(int major, int minor);
@@ -224,6 +223,9 @@ public:
     WindowBuilder &opengl_profile(OpenGLProfile profile);
     WindowBuilder &opengl_forward_compat(bool forward_compat);
     WindowBuilder &opengl_debug_context(bool debug);
+
+    // Wayland specific hints
+    WindowBuilder &wayland_app_id(const std::string &app_id);
 
     [[nodiscard]] std::unique_ptr<Window> build() const;
 
@@ -235,6 +237,7 @@ private:
     GLFWwindow *share_ = nullptr;
 
     std::unordered_map<int, int> hints_;
+    std::unordered_map<int, std::string> str_hints_;
 };
 
 namespace event {

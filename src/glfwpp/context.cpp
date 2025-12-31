@@ -12,7 +12,7 @@ glfwpp::Context::Context() {
         throw std::runtime_error("Failed to initialize GLFW");
     }
 
-    THEIA_LOG_INFO("GLFW v{}", glfwGetVersionString());
+    THEIA_LOG_DEBUG("GLFW v{}", glfwGetVersionString());
 }
 
 glfwpp::Context::~Context() { glfwTerminate(); }

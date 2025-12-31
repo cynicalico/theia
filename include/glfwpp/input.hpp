@@ -66,6 +66,7 @@ void set_input_callbacks(Window &window);
 
 bool supports_raw_mouse_motion();
 
+std::string get_clipboard_string();
 void set_clipboard_string(const std::string &s);
 
 namespace event {

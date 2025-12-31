@@ -1,5 +1,6 @@
 #include "glfwpp/window.hpp"
 #include "glfwpp/input.hpp"
+#include "theia/dear.hpp"
 #include "theia/io.hpp"
 
 #include <stdexcept>
@@ -498,11 +499,20 @@ glfwpp::WindowBuilder &glfwpp::WindowBuilder::opengl_debug_context(bool debug) {
     return *this;
 }
 
+glfwpp::WindowBuilder &glfwpp::WindowBuilder::wayland_app_id(const std::string &app_id) {
+    str_hints_[GLFW_WAYLAND_APP_ID] = app_id;
+    return *this;
+}
+
 std::unique_ptr<glfwpp::Window> glfwpp::WindowBuilder::build() const {
     glfwDefaultWindowHints();
 
     for (const auto &[key, value] : hints_) {
         glfwWindowHint(key, value);
+    }
+
+    for (const auto &[key, value] : str_hints_) {
+        glfwWindowHintString(key, value.c_str());
     }
 
     GLFWwindow *window = glfwCreateWindow(width_, height_, title_.c_str(), monitor_, share_);
@@ -542,6 +552,7 @@ void glfwpp::set_window_callbacks(Window &window) {
     });
 
     window.set_focus_callback([](GLFWwindow *window_, int focused) {
+        theia::Dear::instance().window_focus_callback(window_, focused);
         theia::Hermes::instance().publish<event::WindowFocusEvent>(Window(window_), focused == GLFW_TRUE);
     });
 

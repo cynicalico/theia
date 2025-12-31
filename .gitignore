@@ -8,3 +8,6 @@
 **/*.log
 
 CMakeUserPresets.json
+
+justfile
+imgui.ini
