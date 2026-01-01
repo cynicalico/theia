@@ -50,24 +50,25 @@ int main(int, char *[]) {
             }
         default:;
         }
-
-        THEIA_LOG_INFO("{}", e->key);
     });
 
-    theia::Dear::init(window->handle());
+    theia::Dear::Init(window->handle());
 
     while (!window->should_close()) {
         glfwPollEvents();
 
         glClear(GL_COLOR_BUFFER_BIT);
 
-        auto &dear = theia::Dear::instance();
-        dear.new_frame();
-        dear.begin("Hello, Dear ImGui!") && [] { ImGui::Text("Text text text"); };
-        dear.render();
+        auto &dear = theia::Dear::Instance();
+        dear.NewFrame();
+        dear.Begin("Hello, Dear ImGui!") && [&] {
+            dear.Text("{:.2f} fps", ImGui::GetIO().Framerate);
+            dear.Text("text, text, text");
+        };
+        dear.Render();
 
         window->swap_buffers();
     }
 
-    theia::Dear::shutdown();
+    theia::Dear::Shutdown();
 }

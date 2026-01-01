@@ -552,7 +552,7 @@ void glfwpp::set_window_callbacks(Window &window) {
     });
 
     window.set_focus_callback([](GLFWwindow *window_, int focused) {
-        theia::Dear::instance().window_focus_callback(window_, focused);
+        theia::Dear::Instance().WindowFocusCallback(window_, focused);
         theia::Hermes::instance().publish<event::WindowFocusEvent>(Window(window_), focused == GLFW_TRUE);
     });
 
