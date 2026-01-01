@@ -1,4 +1,5 @@
 #include "glfwpp/context.hpp"
+#include "glfwpp/monitor.hpp"
 #include "theia/logger.hpp"
 
 #define GLFW_INCLUDE_NONE
@@ -13,6 +14,8 @@ glfwpp::Context::Context() {
     }
 
     THEIA_LOG_DEBUG("GLFW v{}", glfwGetVersionString());
+
+    set_monitor_callbacks();
 }
 
 glfwpp::Context::~Context() { glfwTerminate(); }

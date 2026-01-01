@@ -16,4 +16,5 @@ IndentPPDirectives: AfterHash
 SortIncludes: CaseInsensitive
 AllowShortIfStatementsOnASingleLine: true
 AlignTrailingComments: false
+SeparateDefinitionBlocks: Always
 ...

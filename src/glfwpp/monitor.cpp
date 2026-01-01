@@ -100,7 +100,7 @@ std::vector<glfwpp::Monitor> glfwpp::get_monitors() {
 
 void glfwpp::set_monitor_callbacks() {
     glfwSetMonitorCallback([](GLFWmonitor *monitor, int event) {
-        theia::Dear::Instance().MonitorCallback(monitor, event);
+        theia::Dear::MonitorCallback(monitor, event);
         theia::Hermes::instance().publish<event::MonitorEvent>(Monitor(monitor),
                                                                static_cast<event::MonitorEventType>(event));
     });

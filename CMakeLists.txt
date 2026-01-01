@@ -24,7 +24,6 @@ target_sources(theia
         "src/glfwpp/input.cpp"
         "src/glfwpp/monitor.cpp"
         "src/glfwpp/window.cpp"
-        "src/theia/dear.cpp"
         "src/theia/io.cpp"
         "src/theia/logger.cpp"
         "src/theia/theia.cpp"
