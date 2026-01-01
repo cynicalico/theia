@@ -4,13 +4,14 @@
  *            This is deliberate to keep it consistent with Dear ImGui's naming conventions.
  */
 
+#include "glfwpp/window.hpp"
 #include "theia/logger.hpp"
 
 #include "imgui.h"
-#define GLFW_INCLUDE_NONE
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #include <string_view>
@@ -45,7 +46,7 @@ public:
      * GENERAL HELPERS *
      *******************/
 
-    static Context_ Context(GLFWwindow *window);
+    static Context_ Context(const glfwpp::Window &window);
 
     static void NewFrame();
     static void Render();
@@ -352,7 +353,7 @@ private:
     // TODO: ClipRect
 };
 
-inline Dear::Context_ Dear::Context(GLFWwindow *window) { return Context_(window); }
+inline Dear::Context_ Dear::Context(const glfwpp::Window &window) { return Context_(window.handle()); }
 
 inline void Dear::NewFrame() {
     ImGui_ImplOpenGL3_NewFrame();

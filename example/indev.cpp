@@ -20,7 +20,7 @@ int main(int, char *[]) {
     }
     THEIA_LOG_DEBUG("OpenGL Version: {}", reinterpret_cast<const char *>(glGetString(GL_VERSION)));
 
-    const auto dear = Dear::Context(window->handle());
+    const auto dear = Dear::Context(*window);
 
     while (!window->should_close()) {
         glfwPollEvents();
