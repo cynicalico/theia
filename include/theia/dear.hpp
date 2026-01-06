@@ -522,7 +522,7 @@ inline Dear::Context_::Context_(GLFWwindow *window) {
 
     if (!ImGui_ImplOpenGL3_Init("#version 130")) throw std::runtime_error("Failed to initialize ImGui OpenGL backend");
 
-    THEIA_LOG_DEBUG("Dear initialized, ImGui v{}", ImGui::GetVersion());
+    THEIA_LOG_DEBUG("Dear ImGui v{}", ImGui::GetVersion());
 }
 
 inline Dear::Context_::~Context_() {

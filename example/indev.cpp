@@ -1,4 +1,5 @@
 #include "theia/theia.hpp"
+#include <glad/gl.h>
 
 int main(int, char *[]) {
     using theia::Dear;
@@ -14,17 +15,10 @@ int main(int, char *[]) {
                             .build();
     window->set_icon("assets/gem_16x16.png");
 
-    window->make_context_current();
-    if (gladLoadGL(glfwGetProcAddress) == 0) {
-        throw std::runtime_error("Failed to initialize Glad");
-    }
-    THEIA_LOG_DEBUG("OpenGL Version: {}", reinterpret_cast<const char *>(glGetString(GL_VERSION)));
-
     const auto dear = Dear::Context(*window);
 
     while (!window->should_close()) {
-        glfwPollEvents();
-
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         Dear::NewFrame();
@@ -35,5 +29,6 @@ int main(int, char *[]) {
         Dear::Render();
 
         window->swap_buffers();
+        glfwPollEvents();
     }
 }

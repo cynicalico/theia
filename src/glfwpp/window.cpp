@@ -3,6 +3,8 @@
 #include "theia/dear.hpp"
 #include "theia/io.hpp"
 
+#include "glad/gl.h"
+
 #include <stdexcept>
 
 glfwpp::Window::Window(GLFWwindow *window)
@@ -519,6 +521,14 @@ std::unique_ptr<glfwpp::Window> glfwpp::WindowBuilder::build() const {
     if (!window) {
         throw std::runtime_error("Failed to create GLFW window");
     }
+
+    glfwMakeContextCurrent(window);
+    if (gladLoadGL(glfwGetProcAddress) == 0) {
+        throw std::runtime_error("Failed to initialize Glad");
+    }
+    THEIA_LOG_DEBUG("OpenGL Version: {}", reinterpret_cast<const char *>(glGetString(GL_VERSION)));
+    THEIA_LOG_DEBUG("OpenGL Renderer: {}", reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    THEIA_LOG_DEBUG("OpenGL Vendor: {}", reinterpret_cast<const char *>(glGetString(GL_VENDOR)));
 
     return std::make_unique<Window>(window);
 }
