@@ -26,6 +26,7 @@ target_sources(theia
         "src/glfwpp/window.cpp"
         "src/theia/io.cpp"
         "src/theia/logger.cpp"
+        "src/theia/overlay.cpp"
         "src/theia/theia.cpp"
         # [[[end]]]
 
@@ -51,6 +52,7 @@ target_sources(theia
         "include/theia/hermes.hpp"
         "include/theia/io.hpp"
         "include/theia/logger.hpp"
+        "include/theia/overlay.hpp"
         "include/theia/theia.hpp"
         # [[[end]]]
 

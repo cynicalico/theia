@@ -2,6 +2,7 @@
 #include "glfwpp/input.hpp"
 #include "theia/dear.hpp"
 #include "theia/io.hpp"
+#include "theia/overlay.hpp"
 
 #include "glad/gl.h"
 
@@ -14,7 +15,9 @@ glfwpp::Window::Window(GLFWwindow *window)
 }
 
 glfwpp::Window::~Window() {
-    if (handle_) glfwDestroyWindow(handle_);
+    if (handle_) {
+        glfwDestroyWindow(handle_);
+    }
 }
 
 glfwpp::Window::Window(Window &&other) noexcept
@@ -26,9 +29,7 @@ glfwpp::Window::Window(Window &&other) noexcept
 
 glfwpp::Window &glfwpp::Window::operator=(Window &&other) noexcept {
     if (this != &other) {
-        if (handle_) glfwDestroyWindow(handle_);
-        handle_ = other.handle_;
-        other.handle_ = nullptr;
+        std::swap(handle_, other.handle_);
         set_window_callbacks(*this);
         set_input_callbacks(*this);
     }
@@ -526,6 +527,8 @@ std::unique_ptr<glfwpp::Window> glfwpp::WindowBuilder::build() const {
     if (gladLoadGL(glfwGetProcAddress) == 0) {
         throw std::runtime_error("Failed to initialize Glad");
     }
+    glfwSwapInterval(1); // FIXME: This should be able to be set somewhere ahead of time,
+                         //  also have to adjust overlay to know about it
     THEIA_LOG_DEBUG("OpenGL Version: {}", reinterpret_cast<const char *>(glGetString(GL_VERSION)));
     THEIA_LOG_DEBUG("OpenGL Renderer: {}", reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
     THEIA_LOG_DEBUG("OpenGL Vendor: {}", reinterpret_cast<const char *>(glGetString(GL_VENDOR)));
